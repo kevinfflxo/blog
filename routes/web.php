@@ -32,7 +32,7 @@ Route::group(['middleware' => ['web']], function() {
 
 	// Password Reset Routes
 	Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
-	Route::get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm');
+	Route::get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 	// When we generates the token, it'll automatically add the token at then end of password slash reset, and then slash the token, and that's what we identify that someone's alreday authenticated via email, they have their token and that's going to trigger laravel to go match the token, and display the correct the view someone can reset them password. Question mark here is because not every single time will have a token, so we are basically have creating two URLs here, we're creating password slash reset and password slash reset any slash number(token) at the end of it. The question mark inside of here indicates that this is optional that the token might not exist.
 	Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 	Route::post('password/reset', 'Auth\ResetPasswordController@reset');
@@ -56,7 +56,7 @@ Route::group(['middleware' => ['web']], function() {
 	Route::get('blog', ['as' => 'blog.index', 'uses' => 'BlogController@getIndex']);
 	Route::get('/', 'PagesController@getIndex');
 	Route::get('about', 'PagesController@getAbout');
-	Route::get('contact', 'PagesController@getContact');
+	Route::get('contact', 'PagesController@getContact')->name('page.contact');
 	Route::post('contact', ['as' => 'contact', 'uses' => 'PagesController@postContact']);
 
 	Route::get('create', 'PagesController@getCreate');

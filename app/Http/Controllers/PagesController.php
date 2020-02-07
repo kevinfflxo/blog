@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderShipped;
 use App\Post;
 use App\User;
+use Session;
 
 class PagesController extends Controller {
 	
@@ -42,12 +43,13 @@ class PagesController extends Controller {
 			'subject' => 'min:3',
 			'message' => 'min:10'
 		]);
-		$user = User::find(3);
-
-
-
-	
+		
 		Mail::to($request->email)->send(new OrderShipped($request));
+
+		Session::flash('success', 'this email was sucessfully sent');
+
+        // redirect with flash data to posts.show
+        return redirect()->route('page.contact');
 	}
 
 	public function getCreate() {

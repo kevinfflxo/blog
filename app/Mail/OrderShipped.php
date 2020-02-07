@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Http\Request;
 
 class OrderShipped extends Mailable
 {
@@ -16,9 +17,11 @@ class OrderShipped extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public $request;
+
+    public function __construct(Request $request)
     {
-        //
+        $this->request = $request;
     }
 
     /**
@@ -28,6 +31,6 @@ class OrderShipped extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.contact');
+        return $this->view('emails.contact')->withPost($this->request);
     }
 }

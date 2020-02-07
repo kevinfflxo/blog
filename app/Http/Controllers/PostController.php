@@ -140,6 +140,7 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = POST::find($id);
+        // Validate the data
         if ($request->input('slug') == $post->slug) {
             $this->validate($request, array(
                 'title' => 'required|max:255',
@@ -153,12 +154,8 @@ class PostController extends Controller
                 //unique:table,column. unique is going to take the most time is this unique seeing if the items unique searching the database
                 'category_id' => 'required|integer',
                 'body'  => 'required'
-
             ));
         }
-        dd($request);
-        // Validate the data
-        
 
         // Save the data to the database
         $post = Post::find($id);

@@ -66,8 +66,6 @@ class PostController extends Controller
                 //The field under validation may have alpha-numeric characters, as well as dashes and underscores. as well as和..一樣
                 'body'  => 'required',
                 'category_id' => 'required|integer'
-
-
         ));
 
         // store in the database
@@ -77,6 +75,8 @@ class PostController extends Controller
         $post->slug = $request->slug;
         $post->body = $request->body;
         $post->category_id = $request->category_id;
+
+        // save image
 
         $post->save();
 

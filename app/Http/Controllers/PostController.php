@@ -7,6 +7,7 @@ use App\Post;
 use App\Category;
 use App\Tag;
 use Session;
+use Image;
 
 class PostController extends Controller
 {
@@ -77,6 +78,19 @@ class PostController extends Controller
         $post->category_id = $request->category_id;
 
         // save image
+        if ($request->hasFile('featured_image')) {
+            $image = $request->file('featured_image');
+            // time():Unix 的時間戳記 
+            // getClientOriginalExtension()
+            $filename = time().'.'.$image->extension();
+            // storage_path('app') public_path
+            // asset('')是回傳url path，這裡用的public_path()則是回傳實際的public folder位置，因此不用asset
+            $location = public_path('images/'.$filename);
+            // Image::make => create image object
+            Image::make($image)->resize(800, 400)->save($location);
+
+            $post->image = $filename;
+        }
 
         $post->save();
 

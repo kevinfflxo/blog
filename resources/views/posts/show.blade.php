@@ -5,6 +5,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-md-7">
+			<img src="{{ asset('images/'.$post->image) }}" alt="this is a photo"/>
 			<h1>{{ $post -> title }}</h1>
 			<p class='lead'>{{ $post -> body }}</p>
 

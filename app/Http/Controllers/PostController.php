@@ -8,6 +8,7 @@ use App\Category;
 use App\Tag;
 use Session;
 use Image;
+use Storage;
 
 class PostController extends Controller
 {
@@ -62,11 +63,14 @@ class PostController extends Controller
 
         // validate the data
         $this->validate($request, array(
-                'title' => 'required|max:255',
-                'slug' => 'required|alpha_dash|min:5|max:255',
-                //The field under validation may have alpha-numeric characters, as well as dashes and underscores. as well as和..一樣
-                'body'  => 'required',
-                'category_id' => 'required|integer'
+            'title' => 'required|max:255',
+            // unique:posts,slug 表示posts資料表底下的slug欄位要unique
+            'slug' => 'required|alpha_dash|min:5|max:255|unique:posts,slug',
+            // The field under validation may have alpha-numeric characters, as well as dashes and underscores. as well as和..一樣
+            'body'  => 'required',
+            'category_id' => 'required|integer',
+            // sometimes:Only validate it if there's something in it
+            'featured_image' => 'sometimes|image'
         ));
 
         // store in the database
@@ -154,25 +158,36 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = POST::find($id);
+
         // Validate the data
-        if ($request->input('slug') == $post->slug) {
-            $this->validate($request, array(
-                'title' => 'required|max:255',
-                'category_id' => 'required|integer',
-                'body'  => 'required'
-            ));
-        }else{
-            $this->validate($request, array(
-                'title' => 'required|max:255',
-                'slug' => 'required|alpha_dash|min:5|max:255|unique:posts,slug',
-                //unique:table,column. unique is going to take the most time is this unique seeing if the items unique searching the database
-                'category_id' => 'required|integer',
-                'body'  => 'required'
-            ));
+        
+        $this->validate($request, array(
+            'title' => 'required|max:255',
+            // 單引號無法讀變數
+            // unique不能加空格！！！！！, unique:posts,slug,$id 強迫Unique規則忽略特定$id
+            'slug' => "required|alpha_dash|min:5|max:255|unique:posts,slug,$id",
+            //unique:table,column. unique is going to take the most time is this unique seeing if the items unique searching the database
+            'category_id' => 'required|integer',
+            'body'  => 'required',
+            'featured_image' => 'image'
+        ));
+        
+        if ($request->hasFile('featured_image')) {
+            // add the new photo
+            $image = $request->file('featured_image');
+            $filename = time().'.'.$image->extension();
+            $location = public_path('images/'.$filename);
+            Image::make($image)->resize(800, 400)->save($location);
+            $oldFilename = $post->image;
+
+            // update the database
+            $post->image = $filename;
+
+            // delete the old photo
+            Storage::delete($oldFilename);
         }
 
         // Save the data to the database
-        $post = Post::find($id);
         //we are not going to start a new Post, we need to do is go out and find 
         //the existing Post and than save the changes on top of the existing Post
         //store as work is saving a brand new row to the database and update is just updating an existing row
@@ -205,6 +220,8 @@ class PostController extends Controller
     {
         $post = POST::find($id);
         $post->tags()->detach();
+        Storage::delete($post->image);
+
         $post->delete();
 
         Session::flash('success', 'The post was successfully deleted');

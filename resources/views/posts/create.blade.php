@@ -47,6 +47,8 @@
 			    {{ Form::submit('Create Post', array('class' => 'btn btn-success btn-lg btn-block',
 			     'style' => 'margin-top:20px;')) }}
 			{!! Form::close() !!}
+
+			
 		</div>
 	</div>
 @endsection

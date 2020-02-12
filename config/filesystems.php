@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'local_image'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,6 +42,15 @@ return [
     */
 
     'disks' => [
+        /*
+        |--------------------------------------
+        | 為存image路徑而設的filesystem
+        |--------------------------------------
+        */ 
+        'local_image' => [
+            'driver' => 'local',
+            'root' => public_path('images/'),
+        ],
 
         'local' => [
             'driver' => 'local',

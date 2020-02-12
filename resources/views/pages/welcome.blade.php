@@ -22,7 +22,7 @@
 				<p>{{ substr($post->body, 0, 300) }}{{ strlen($post->body) > 300 ? "..." : "" }}</p>
 						
 				<a class="btn btn-primary btn-lg" href="{{ url('blog/'.$post->slug) }}" role="button">Read more</a>
-			</div>					
+			</div>
 			<hr>
 			@endforeach
 
